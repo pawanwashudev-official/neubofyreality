@@ -152,6 +152,14 @@ img {
     border-bottom: 1px solid var(--border);
 }
 
+.desktop-only {
+    display: flex;
+}
+
+.mobile-only {
+    display: none;
+}
+
 .navbar-container {
     display: flex;
     align-items: center;
@@ -855,6 +863,15 @@ img {
         border-bottom: 1px solid var(--border);
         gap: 10px;
         animation: slideDown 0.3s ease forwards;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: block !important;
     }
 
     .navbar-menu.active {

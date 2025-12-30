@@ -1,14 +1,14 @@
 {
-  "rewrites": [
-    {
-      "source": "/",
-      "has": [
+    "rewrites": [
         {
-          "type": "host",
-          "value": "realityprivacypolicy.vercel.app"
+            "source": "/",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "realityprivicypolicy.vercel.app"
+                }
+            ],
+            "destination": "/privacy.html"
         }
-      ],
-      "destination": "/privacy.html"
-    }
-  ]
+    ]
 }

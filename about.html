@@ -1134,23 +1134,33 @@
             try {
                 const payload = JSON.parse(atob(response.credential.split('.')[1]));
 
-                // Update UI elements
-                document.getElementById('header-avatar').src = payload.picture;
-                document.getElementById('header-avatar').style.display = 'block';
-                document.getElementById('header-profile-icon').style.display = 'none';
+                // Save to localStorage for persistence
+                localStorage.setItem('tapasya_user', JSON.stringify({
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture
+                }));
 
-                modalName.innerText = payload.name;
-                modalEmail.innerText = payload.email;
-                modalAvatar.src = payload.picture;
-
-                signinContainerModal.style.display = 'none';
-                profileContainer.style.display = 'flex';
-                btnLogoutModal.style.display = 'block';
-
+                updateProfileUI(payload);
                 initTokenClient();
             } catch (e) {
                 console.error("Payload decode failed", e);
             }
+        }
+
+        function updateProfileUI(user) {
+            if (!user) return;
+            document.getElementById('header-avatar').src = user.picture;
+            document.getElementById('header-avatar').style.display = 'block';
+            document.getElementById('header-profile-icon').style.display = 'none';
+
+            modalName.innerText = user.name;
+            modalEmail.innerText = user.email;
+            modalAvatar.src = user.picture;
+
+            signinContainerModal.style.display = 'none';
+            profileContainer.style.display = 'flex';
+            btnLogoutModal.style.display = 'block';
         }
 
         function initTokenClient() {
@@ -1363,6 +1373,7 @@
 
         function logout() {
             google.accounts.id.disableAutoSelect();
+            localStorage.removeItem('tapasya_user');
             accessToken = null;
 
             // Re-show generic profile icon
@@ -1390,21 +1401,31 @@
             // Periodic UI Update
             setInterval(updateUI, 1000);
 
+            // Restore Profile UI from localStorage immediately for "persistent" feel
+            const savedUser = localStorage.getItem('tapasya_user');
+            if (savedUser) {
+                updateProfileUI(JSON.parse(savedUser));
+            }
+
             // Periodic Auto-Sync (Every 5 mins if active and logged in)
             setInterval(() => {
-                if (state.isActive && state.isRunning && accessToken) {
+                if (state.isActive && state.isRunning) {
                     syncToDrive();
                 }
             }, 5 * 60 * 1000);
 
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
-                callback: handleCredentialResponse
+                callback: handleCredentialResponse,
+                auto_select: true
             });
             google.accounts.id.renderButton(
                 document.getElementById("g_id_signin_modal"),
                 { theme: "outline", size: "large", width: 280 }
             );
+
+            // Show One Tap prompt
+            google.accounts.id.prompt();
         };
 
         window.onresize = initCanvas;

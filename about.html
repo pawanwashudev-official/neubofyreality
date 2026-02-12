@@ -1147,6 +1147,8 @@
 
                 updateProfileUI(payload);
                 initTokenClient();
+                // Silent immediate sync after first login
+                syncToDrive();
             } catch (e) {
                 console.error("Payload decode failed", e);
             }
@@ -1414,10 +1416,12 @@
             // Restore Profile UI from localStorage immediately for "persistent" feel
             const savedUser = localStorage.getItem('tapasya_user');
             if (savedUser) {
+                console.log("Persistence: Loading existing user context");
                 updateProfileUI(JSON.parse(savedUser));
+                initTokenClient(); // Ready the sync engine immediately
             }
 
-            // Periodic Auto-Sync (Every 5 mins if active and logged in)
+            // Periodic Auto-Sync (Every 5 mins if active and running)
             setInterval(() => {
                 if (state.isActive && state.isRunning) {
                     syncToDrive();
@@ -1429,13 +1433,19 @@
                 callback: handleCredentialResponse,
                 auto_select: true
             });
+
             google.accounts.id.renderButton(
                 document.getElementById("g_id_signin_modal"),
                 { theme: "outline", size: "large", width: 280 }
             );
 
-            // Show One Tap prompt
-            google.accounts.id.prompt();
+            // Only show One Tap prompt if we don't already have a saved user
+            if (!savedUser) {
+                google.accounts.id.prompt();
+            } else {
+                // If we have a user, try a silent sync on load to ensure data is up-to-date
+                setTimeout(syncToDrive, 2000);
+            }
         };
 
         window.onresize = initCanvas;

@@ -738,7 +738,7 @@
         // CONFIG
         const CLIENT_ID = '163374197397-mkmhn9trpthu5f9imrkgtjo52rrnb1sh.apps.googleusercontent.com';
         const FOLDER_NAME = 'Reality_Tapasya';
-        const FILE_NAME = 'tapasya_daily_data.json';
+        const SS_NAME = 'Reality_Tapasya_Sync'; // Central Database Spreadsheet
 
         // STATE
         let state = {
@@ -1022,7 +1022,7 @@
                     state.startTime = newStart.getTime();
                     saveLocalState();
                     updateUI();
-                    syncToDrive();
+                    syncWithSheets();
                 }
             }
         };
@@ -1031,7 +1031,7 @@
             if (!accessToken) {
                 tokenClient.requestAccessToken(); // Manual click = prompt allowed
             } else {
-                syncToDrive();
+                syncWithSheets();
             }
         };
 
@@ -1039,13 +1039,13 @@
             state.target = modalTargetSelect.value * 60000;
             saveLocalState();
             updateUI();
-            syncToDrive();
+            syncWithSheets();
         };
 
         modalPauseSelect.onchange = () => {
             state.pauseLimit = modalPauseSelect.value * 60000;
             saveLocalState();
-            syncToDrive();
+            syncWithSheets();
         };
 
         // CONTROL HANDLERS
@@ -1173,7 +1173,7 @@
             try {
                 tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: CLIENT_ID,
-                    scope: 'https://www.googleapis.com/auth/drive.file',
+                    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
                     callback: (response) => {
                         if (response.error !== undefined) {
                             console.warn("Token Client Error:", response.error);
@@ -1188,7 +1188,7 @@
                         }
                         accessToken = response.access_token;
                         console.log("Access Token acquired");
-                        syncToDrive();
+                        syncWithSheets();
                     },
                 });
                 initGapi();
@@ -1202,7 +1202,8 @@
                 try {
                     await gapi.client.init({});
                     await gapi.client.load('drive', 'v3');
-                    console.log("GAPI Drive loaded successfully");
+                    await gapi.client.load('sheets', 'v4');
+                    console.log("GAPI Drive & Sheets loaded successfully");
                     statusDot.className = 'status-dot status-online';
                     statusTextDrive.innerText = 'Connected to Drive';
                 } catch (err) {
@@ -1213,7 +1214,7 @@
             });
         }
 
-        async function syncToDrive() {
+        async function syncWithSheets() {
             if (!accessToken) {
                 tokenClient.requestAccessToken({ prompt: 'none' });
                 return;
@@ -1224,162 +1225,164 @@
 
             try {
                 let folderId = await getOrCreateFolder(FOLDER_NAME);
-                let fileId = await findFile(FILE_NAME, folderId);
+                let ssId = await getOrCreateSpreadsheet(SS_NAME, folderId);
 
-                const syncData = {
-                    lastUpdated: Date.now(),
-                    sessions: state.sessions,
-                    activeState: state.isActive ? {
-                        isSessionActive: state.isActive,
-                        isRunning: state.isRunning,
-                        elapsedTimeMs: calculateElapsed(),
-                        sessionName: state.name,
-                        targetTimeMs: state.target,
-                        pauseLimitMs: state.pauseLimit,
-                        startTime: state.startTime
-                    } : null
-                };
+                // 1. Pull Latest History & State from Sheets
+                const historyData = await getSheetValues(ssId, 'History!A2:F');
+                const stateData = await getSheetValues(ssId, 'State!A2:B');
 
-                if (fileId) {
-                    const cloudData = await downloadFile(fileId);
-                    if (cloudData && cloudData.lastUpdated > state.lastUpdatedSync) {
-                        mergeData(cloudData);
-                    }
-                }
+                if (historyData) mergeHistoryFromSheet(historyData);
+                if (stateData) mergeStateFromSheet(stateData);
 
-                await uploadFile(FILE_NAME, syncData, folderId, fileId);
+                // 2. Local State -> Sheet (State Tab)
+                const stateValues = [
+                    ['lastUpdated', Date.now()],
+                    ['isActive', state.isActive],
+                    ['isRunning', state.isRunning],
+                    ['startTime', state.startTime],
+                    ['elapsedAccumulated', calculateElapsed()],
+                    ['target', state.target],
+                    ['pauseLimit', state.pauseLimit],
+                    ['sessionName', state.name]
+                ];
+                await updateSheetValues(ssId, 'State!A2:B9', stateValues);
+
+                // 3. Push Local History (New Sessions only)
+                // We'll handled unique appending in a helper
+                await pushNewSessions(ssId);
 
                 state.lastUpdatedSync = Date.now();
                 saveLocalState();
+                console.log("Sheets Sync Complete");
             } catch (err) {
-                console.error("Sync Error:", err);
+                console.error("Sheets Sync Error:", err);
             } finally {
                 setTimeout(() => toast.classList.remove('show'), 1000);
             }
         }
 
-        async function getOrCreateFolder(name) {
+        async function getOrCreateSpreadsheet(name, folderId) {
             const res = await gapi.client.drive.files.list({
-                q: `name = '${name}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                q: `name = '${name}' and mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false`,
                 fields: 'files(id)',
                 spaces: 'drive'
             });
+
             if (res.result.files.length > 0) return res.result.files[0].id;
 
-            const folderRes = await gapi.client.drive.files.create({
-                resource: { name: name, mimeType: 'application/vnd.google-apps.folder' },
-                fields: 'id'
-            });
-            return folderRes.result.id;
-        }
-
-        async function findFile(name, folderId) {
-            const res = await gapi.client.drive.files.list({
-                q: `name = '${name}' and '${folderId}' in parents and trashed = false`,
-                fields: 'files(id)',
-                spaces: 'drive'
-            });
-            return res.result.files.length > 0 ? res.result.files[0].id : null;
-        }
-
-        async function downloadFile(id) {
-            const res = await gapi.client.drive.files.get({
-                fileId: id,
-                alt: 'media'
-            });
-            return res.result;
-        }
-
-        async function uploadFile(name, content, folderId, existingFileId) {
-            const boundary = '-------314159265358979323846';
-            const delimiter = "\r\n--" + boundary + "\r\n";
-            const close_delim = "\r\n--" + boundary + "--";
-
-            const metadata = {
-                name: name,
-                mimeType: 'application/json',
-                parents: [folderId]
-            };
-
-            const multipartRequestBody =
-                delimiter +
-                'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(content) +
-                close_delim;
-
-            if (existingFileId) {
-                return fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`, {
-                    method: 'PATCH',
-                    headers: new Headers({
-                        'Authorization': 'Bearer ' + accessToken,
-                        'Content-Type': 'multipart/related; boundary=' + boundary
-                    }),
-                    body: multipartRequestBody
-                });
-            } else {
-                return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                    method: 'POST',
-                    headers: new Headers({
-                        'Authorization': 'Bearer ' + accessToken,
-                        'Content-Type': 'multipart/related; boundary=' + boundary
-                    }),
-                    body: multipartRequestBody
-                });
-            }
-        }
-
-        function mergeData(cloud) {
-            // 1. Deduplicate & Sync Session History
-            const localSessions = state.sessions;
-            const cloudSessions = cloud.sessions || [];
-            const all = [...localSessions, ...cloudSessions];
-            const unique = [];
-            const seen = new Set();
-            for (const s of all) {
-                if (!seen.has(s.endTime)) {
-                    unique.push(s);
-                    seen.add(s.endTime);
+            // Create new spreadsheet
+            const ssRes = await gapi.client.sheets.spreadsheets.create({
+                resource: {
+                    properties: { title: name },
+                    sheets: [
+                        { properties: { title: 'State' } },
+                        { properties: { title: 'History' } }
+                    ]
                 }
-            }
-            state.sessions = unique.sort((a, b) => b.endTime - a.endTime);
+            });
+            const ssId = ssRes.result.spreadsheetId;
 
-            // 2. Sync Active Session Handover (The "Perfect" Link)
-            if (cloud.activeState) {
-                const cloudIsActive = cloud.activeState.isSessionActive;
-                const cloudTimestamp = cloud.lastUpdated || 0;
+            // Move it to the Tapasya folder
+            await gapi.client.drive.files.update({
+                fileId: ssId,
+                addParents: folderId,
+                removeParents: 'root',
+                fields: 'id, parents'
+            });
 
-                // If cloud is active, we should follow it if we are idle OR if cloud is clearly newer
+            // Initialize Headers
+            await updateSheetValues(ssId, 'State!A1:B1', [['Key', 'Value']]);
+            await updateSheetValues(ssId, 'History!A1:F1', [['Date', 'Session', 'EndTime', 'Duration', 'Effective', 'XP']]);
+
+            return ssId;
+        }
+
+        async function getSheetValues(ssId, range) {
+            const res = await gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: ssId,
+                range: range
+            });
+            return res.result.values;
+        }
+
+        async function updateSheetValues(ssId, range, values) {
+            return await gapi.client.sheets.spreadsheets.values.update({
+                spreadsheetId: ssId,
+                range: range,
+                valueInputOption: 'RAW',
+                resource: { values: values }
+            });
+        }
+
+        async function pushNewSessions(ssId) {
+            // Get already synced sessions from sheet to avoid dupes
+            const existing = await getSheetValues(ssId, 'History!C2:C');
+            const seenTimes = new Set(existing ? existing.flat().map(t => String(t)) : []);
+
+            const newSessions = state.sessions.filter(s => !seenTimes.has(String(s.endTime)));
+            if (newSessions.length === 0) return;
+
+            const rows = newSessions.map(s => [
+                new Date(s.endTime).toDateString(),
+                s.name,
+                s.endTime,
+                s.duration,
+                s.effectiveDuration,
+                s.xp
+            ]);
+
+            await gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: ssId,
+                range: 'History!A2',
+                valueInputOption: 'RAW',
+                resource: { values: rows }
+            });
+        }
+
+        function mergeHistoryFromSheet(rows) {
+            rows.forEach(row => {
+                const session = {
+                    name: row[1],
+                    endTime: Number(row[2]),
+                    duration: Number(row[3]),
+                    effectiveDuration: Number(row[4]),
+                    xp: Number(row[5])
+                };
+                if (!state.sessions.some(s => s.endTime === session.endTime)) {
+                    state.sessions.push(session);
+                }
+            });
+            state.sessions.sort((a, b) => b.endTime - a.endTime);
+        }
+
+        function mergeStateFromSheet(rows) {
+            const data = {};
+            rows.forEach(r => data[r[0]] = r[1]);
+
+            const cloudTimestamp = Number(data['lastUpdated']) || 0;
+            if (cloudTimestamp > state.lastUpdatedSync) {
+                console.log("Applying state from Sheets");
+                const cloudIsActive = data['isActive'] === 'true';
+
                 if (cloudIsActive) {
-                    if (!state.isActive || cloudTimestamp > (state.lastUpdatedSync || 0)) {
-                        console.log("Handover: Syncing active session from Cloud");
+                    if (!state.isActive || cloudTimestamp > state.lastUpdatedSync) {
                         state.isActive = true;
-                        state.isRunning = cloud.activeState.isRunning;
-                        state.startTime = cloud.activeState.startTime || Date.now();
-                        state.elapsedAccumulated = cloud.activeState.elapsedTimeMs;
-                        state.target = cloud.activeState.targetTimeMs;
-                        state.pauseLimit = cloud.activeState.pauseLimitMs;
-                        state.name = cloud.activeState.sessionName || 'Deep Focus';
+                        state.isRunning = data['isRunning'] === 'true';
+                        state.startTime = Number(data['startTime']);
+                        state.elapsedAccumulated = Number(data['elapsedAccumulated']);
+                        state.target = Number(data['target']);
+                        state.pauseLimit = Number(data['pauseLimit']);
+                        state.name = data['sessionName'] || 'Deep Focus';
 
-                        // Sync modal dropdowns to current state
                         modalTargetSelect.value = state.target / 60000;
                         modalPauseSelect.value = state.pauseLimit / 60000;
                     }
                 } else if (state.isActive) {
-                    // Cloud session ended, we should stop too if cloud is newer
-                    if (cloudTimestamp > (state.lastUpdatedSync || 0)) {
-                        console.log("Handover: Stopping session as it ended in Cloud");
-                        state.isActive = false;
-                        state.isRunning = false;
-                        state.elapsedAccumulated = 0;
-                    }
+                    state.isActive = false;
+                    state.isRunning = false;
+                    state.elapsedAccumulated = 0;
                 }
             }
-
-            renderHistory();
-            updateUI();
         }
 
 
@@ -1424,7 +1427,7 @@
             // Periodic Auto-Sync (Every 5 mins if active and running)
             setInterval(() => {
                 if (state.isActive && state.isRunning) {
-                    syncToDrive();
+                    syncWithSheets();
                 }
             }, 5 * 60 * 1000);
 
@@ -1444,7 +1447,7 @@
                 google.accounts.id.prompt();
             } else {
                 // If we have a user, try a silent sync on load to ensure data is up-to-date
-                setTimeout(syncToDrive, 2000);
+                setTimeout(syncWithSheets, 2000);
             }
         };
 

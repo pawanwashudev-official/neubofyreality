@@ -24,7 +24,7 @@
       "permanent": false
     },
     {
-      "source": "/tapasya_web",
+      "source": "/",
       "destination": "/tapasya_web.html",
       "permanent": false
     }

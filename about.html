@@ -59,40 +59,66 @@
         header {
             padding: 24px;
             display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-main {
+            display: flex;
             align-items: center;
-            justify-content: space-between;
-            max-width: 800px;
-            margin: 0 auto;
             width: 100%;
         }
 
         .header-title {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-left: 16px;
+            flex: 1;
         }
 
-        .auth-section {
+        .header-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-profile {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        #user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface-color);
-            padding: 6px 12px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: none;
         }
 
-        #user-avatar {
-            width: 24px;
-            height: 24px;
+        .user-profile img {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            border: 2px solid var(--primary-color);
         }
 
         main {
@@ -109,13 +135,24 @@
 
         /* Clock Section */
         .clock-container {
-            position: relative;
             width: 320px;
             height: 320px;
+            position: relative;
+            margin: 40px auto;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 40px;
+        }
+
+        .glow-ring {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-color);
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
         }
 
         #waveCanvas {
@@ -149,6 +186,44 @@
             font-weight: 600;
         }
 
+        /* Live XP Card */
+        .live-stats-card {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .live-stats-card svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 4px;
+        }
+
+        /* Rest Timer Badge */
+        .rest-timer-badge {
+            background: var(--secondary-color);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
         /* Controls */
         .controls {
             display: flex;
@@ -175,19 +250,38 @@
         }
 
         .btn-primary {
-            background-color: var(--primary-color);
-            color: #000;
-        }
-
-        .btn-secondary {
-            background-color: var(--surface-color);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--primary-color);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(187, 134, 252, 0.3);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
 
         .btn-error {
-            background-color: var(--error-color);
+            background: var(--error-color);
             color: #fff;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(207, 102, 121, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* History Section */
@@ -197,18 +291,48 @@
             border-radius: 24px;
             padding: 24px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 40px;
         }
 
-        .history-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .history-title {
             font-size: 18px;
             font-weight: 700;
+        }
+
+        .day-navigator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #tv-selected-date {
+            font-size: 14px;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: center;
         }
 
         #session-list {
@@ -261,6 +385,156 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* Stats Dashboard */
+        .stats-container {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 24px;
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 400px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .profile-info h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .profile-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-row label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .settings-row select {
+            background: #1e1e1e;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-online {
+            background: #4CAF50;
+        }
+
+        .status-offline {
+            background: #9E9E9E;
+        }
+
         @media (max-width: 480px) {
             .clock-container {
                 width: 280px;
@@ -270,6 +544,10 @@
             #timer-text {
                 font-size: 42px;
             }
+
+            .stats-container {
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
@@ -277,28 +555,78 @@
 <body>
 
     <header>
-        <div class="header-title">Tapasya</div>
-        <div class="auth-section">
-            <div id="user-info">
-                <img id="user-avatar" src="" alt="">
-                <span id="user-name"></span>
-            </div>
-            <div id="g_id_signin"></div>
-            <button id="btn-sync" class="btn btn-secondary"
-                style="padding: 8px 12px; font-size: 12px; border-radius: 10px; display: none;">
-                Sync Now
+        <div class="header-main">
+            <button class="icon-btn" onclick="window.history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>
             </button>
+            <div class="header-title">Tapasya</div>
+            <div class="header-actions">
+                <button id="btn-edit-time" class="icon-btn" title="Edit Start Time" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                </button>
+                <button id="btn-sync-action" class="icon-btn" title="Sync Now">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
+                    </svg>
+                </button>
+                <button id="btn-open-profile" class="icon-btn" title="Profile & Settings">
+                    <img id="header-avatar" src=""
+                        style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary-color); display: none;">
+                    <svg id="header-profile-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08s5.97 1.09 6 3.08c-1.29 1.94-3.5 3.22-6 3.22z" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
 
     <main>
+        <!-- Stats Dashboard -->
+        <div id="stats-dashboard" class="stats-container" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-label">Effective Time</div>
+                <div id="stat-effective" class="stat-value">00:00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Session XP</div>
+                <div id="stat-xp" class="stat-value">0 XP</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Progress</div>
+                <div id="stat-progress" class="stat-value">0/4</div>
+            </div>
+        </div>
+
         <div class="clock-container">
+            <div class="glow-ring"></div>
             <canvas id="waveCanvas"></canvas>
             <div class="timer-overlay">
                 <div id="timer-text">00:00:00</div>
                 <div id="status-text">Ready</div>
+
+                <!-- Live XP Card -->
+                <div id="card-live-stats" class="live-stats-card" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFC107">
+                        <path
+                            d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z" />
+                    </svg>
+                    <span id="tv-live-xp">0 XP</span>
+                    <div class="stat-divider"></div>
+                    <span id="tv-live-fragment">Frag 0</span>
+                </div>
+
+                <!-- Rest Timer Badge -->
+                <div id="tv-rest-timer" class="rest-timer-badge" style="display: none;">Rest: 05:00</div>
             </div>
         </div>
+
 
         <div class="controls">
             <button id="btn-main" class="btn btn-primary">
@@ -313,21 +641,96 @@
                 </svg>
                 <span>Stop</span>
             </button>
+            <button id="btn-reset" class="btn btn-secondary" style="display: none; padding: 16px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+                </svg>
+            </button>
         </div>
 
         <section class="history-section">
-            <div class="history-header">
-                <h3 class="history-title">Recent Sessions</h3>
-                <span id="sync-status" style="font-size: 12px; color: var(--text-secondary);">Last synced: Never</span>
-            </div>
-            <div id="session-list">
-                <!-- Session items will be injected here -->
-                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
-                    No sessions recorded today
+            <div class="section-header">
+                <h3 class="history-title">Session History</h3>
+                <div class="day-navigator">
+                    <button id="btn-prev-day" class="nav-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        </svg>
+                    </button>
+                    <span id="tv-selected-date">Today</span>
+                    <button id="btn-next-day" class="nav-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        </svg>
+                    </button>
                 </div>
             </div>
+            <div id="session-list"></div>
         </section>
     </main>
+
+    <!-- Profile & Settings Modal -->
+    <div id="modal-profile" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Profile & Settings</h2>
+                <button class="icon-btn" onclick="toggleModal('modal-profile', false)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="profile-container" class="profile-section" style="display: none;">
+                <img id="modal-avatar" class="profile-avatar" src="" alt="Avatar">
+                <div class="profile-info">
+                    <h3 id="modal-name">User Name</h3>
+                    <p id="modal-email">user@example.com</p>
+                    <div class="connection-status">
+                        <div id="status-dot" class="status-dot status-offline"></div>
+                        <span id="status-text-drive">Connecting to Drive...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="signin-container-modal" style="text-align: center; margin-bottom: 24px;">
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">Sign in to sync your data
+                </p>
+                <div id="g_id_signin_modal"></div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-row">
+                    <label>Daily Target</label>
+                    <select id="modal-target-select">
+                        <option value="15">15m</option>
+                        <option value="30">30m</option>
+                        <option value="60" selected>1h</option>
+                        <option value="120">2h</option>
+                        <option value="180">3h</option>
+                        <option value="240">4h</option>
+                    </select>
+                </div>
+                <div class="settings-row">
+                    <label>Pause Limit</label>
+                    <select id="modal-pause-select">
+                        <option value="5">5m</option>
+                        <option value="15" selected>15m</option>
+                        <option value="30">30m</option>
+                        <option value="60">1h</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btn-logout-modal" class="btn btn-error"
+                style="width: 100%; border-radius: 12px; height: 48px; display: none;">
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
 
     <div id="sync-toast">Syncing to Cloud...</div>
 
@@ -345,9 +748,11 @@
             elapsedAccumulated: 0,
             pauseStartTime: 0,
             totalPause: 0,
+            pauseLimit: 15 * 60 * 1000,
             name: 'Deep Focus',
             target: 60 * 60 * 1000,
             lastUpdatedSync: 0,
+            selectedDayOffset: 0,
             sessions: []
         };
 
@@ -358,8 +763,30 @@
         const statusText = document.getElementById('status-text');
         const btnMain = document.getElementById('btn-main');
         const btnStop = document.getElementById('btn-stop');
+        const btnReset = document.getElementById('btn-reset');
         const sessionList = document.getElementById('session-list');
+        const statsDashboard = document.getElementById('stats-dashboard');
 
+        // Modal / Profile Elements
+        const modalProfile = document.getElementById('modal-profile');
+        const profileContainer = document.getElementById('profile-container');
+        const signinContainerModal = document.getElementById('signin-container-modal');
+        const modalAvatar = document.getElementById('modal-avatar');
+        const modalName = document.getElementById('modal-name');
+        const modalEmail = document.getElementById('modal-email');
+        const modalTargetSelect = document.getElementById('modal-target-select');
+        const modalPauseSelect = document.getElementById('modal-pause-select');
+        const btnLogoutModal = document.getElementById('btn-logout-modal');
+        const statusDot = document.getElementById('status-dot');
+        const statusTextDrive = document.getElementById('status-text-drive');
+        const btnOpenProfile = document.getElementById('btn-open-profile');
+
+        function toggleModal(id, show) {
+            const m = document.getElementById(id);
+            m.style.display = show ? 'flex' : 'none';
+        }
+
+        btnOpenProfile.onclick = () => toggleModal('modal-profile', true);
         // INITIALIZE CANVAS
         function initCanvas() {
             canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -372,32 +799,50 @@
         function drawWave() {
             const w = canvas.offsetWidth;
             const h = canvas.offsetHeight;
-            const progress = state.isActive ? Math.min(calculateElapsed() / state.target, 1) : 0.05;
+            const elapsed = calculateElapsed();
+            const progress = state.isActive ? Math.min(elapsed / state.target, 1) : 0.05;
 
             ctx.clearRect(0, 0, w, h);
 
-            // Draw background fill
+            // 1. Draw Background Fill (Dark grey background)
             ctx.fillStyle = '#121212';
             ctx.beginPath();
-            ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+            ctx.arc(w / 2, h / 2, w / 2 - 4, 0, Math.PI * 2);
             ctx.fill();
 
-            // Wave height calculation
+            // 2. Draw Progress Ring
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, w / 2 - 2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = state.isRunning ? 'var(--primary-color)' : 'var(--secondary-color)';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, w / 2 - 2, -Math.PI / 2, (-Math.PI / 2) + (Math.PI * 2 * progress));
+            ctx.stroke();
+
+            // 3. Draw Water Wave
             const waveHeight = h * (1 - progress);
 
             ctx.save();
             ctx.beginPath();
-            ctx.arc(w / 2, h / 2, w / 2 - 2, 0, Math.PI * 2);
+            ctx.arc(w / 2, h / 2, w / 2 - 6, 0, Math.PI * 2);
             ctx.clip();
 
-            // Draw Waves
-            drawSineWave(w, h, waveHeight, offset, '#BB86FC');
-            drawSineWave(w, h, waveHeight, offset + 100, 'rgba(187, 134, 252, 0.5)');
+            const primaryColor = state.isRunning ? '#BB86FC' : '#03DAC6';
+            const secondaryColor = state.isRunning ? 'rgba(187, 134, 252, 0.5)' : 'rgba(3, 218, 198, 0.5)';
+
+            drawSineWave(w, h, waveHeight, offset, primaryColor);
+            drawSineWave(w, h, waveHeight, offset + 100, secondaryColor);
 
             ctx.restore();
 
             offset += 0.05;
             requestAnimationFrame(drawWave);
+            updateUI();
         }
 
         function drawSineWave(w, h, waveHeight, shift, color) {
@@ -411,19 +856,70 @@
             ctx.lineTo(w, h);
             ctx.fill();
         }
+        // Carbon Copy UI Elements
+        const liveStatsCard = document.getElementById('card-live-stats');
+        const liveXPText = document.getElementById('tv-live-xp');
+        const liveFragText = document.getElementById('tv-live-fragment');
+        const restTimerBadge = document.getElementById('tv-rest-timer');
+        const selectedDateText = document.getElementById('tv-selected-date');
+        const btnPrevDay = document.getElementById('btn-prev-day');
+        const btnNextDay = document.getElementById('btn-next-day');
+        const btnEditTime = document.getElementById('btn-edit-time');
+        const btnSyncAction = document.getElementById('btn-sync-action');
 
-        // CORE LOGIC (ZERO-BACKGROUND PORT)
+        // CORE MATH (PARITY WITH ANDROID)
+        function calculateEffectiveTime(elapsed) {
+            const mins = Math.floor(elapsed / 60000);
+            const fragments = Math.floor(mins / 15);
+            return fragments * 15 * 60000;
+        }
+
+        function calculateXP(effectiveElapsedMs) {
+            const mins = effectiveElapsedMs / 60000;
+            const fragments = mins / 15;
+            let totalXP = 0;
+            for (let i = 1; i <= fragments; i++) {
+                totalXP += i * 15;
+            }
+            return totalXP;
+        }
+
         function calculateElapsed() {
             if (!state.isActive) return 0;
+            let currentElapsed = state.elapsedAccumulated;
             if (state.isRunning) {
-                return state.elapsedAccumulated + (Date.now() - state.startTime);
+                currentElapsed += (Date.now() - state.startTime);
             }
-            return state.elapsedAccumulated;
+            // Cap total pause if needed? (Android logic sometimes caps it)
+            return currentElapsed;
         }
 
         function updateUI() {
             const elapsed = calculateElapsed();
             timerText.innerText = formatTime(elapsed);
+
+            if (state.isActive) {
+                statsDashboard.style.display = 'flex';
+                btnReset.style.display = 'flex';
+                btnEditTime.style.display = 'flex';
+                const effective = calculateEffectiveTime(elapsed);
+                const xp = calculateXP(effective);
+                const fragments = Math.floor(elapsed / 60000 / 15);
+
+                document.getElementById('stat-effective').innerText = formatTimeShort(effective);
+                document.getElementById('stat-xp').innerText = xp + " XP";
+                document.getElementById('stat-progress').innerText = fragments + "/" + Math.floor(state.target / 60000 / 15);
+
+                // Live Stats Card
+                liveStatsCard.style.display = 'flex';
+                liveXPText.innerText = xp + " XP";
+                liveFragText.innerText = "Frag " + (fragments + 1);
+            } else {
+                statsDashboard.style.display = 'none';
+                liveStatsCard.style.display = 'none';
+                btnReset.style.display = 'none';
+                btnEditTime.style.display = 'none';
+            }
 
             if (!state.isActive) {
                 statusText.innerText = "Ready";
@@ -435,9 +931,23 @@
                 btnStop.style.display = 'flex';
             } else {
                 statusText.innerText = "Paused";
+                const pauseElapsed = Date.now() - state.pauseStartTime;
+                if (pauseElapsed < state.pauseLimit) {
+                    restTimerBadge.style.display = 'block';
+                    restTimerBadge.innerText = `Rest: ${formatTime((state.pauseLimit - pauseElapsed))}`;
+                } else {
+                    restTimerBadge.style.display = 'none';
+                }
                 btnMain.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Resume</span>`;
                 btnStop.style.display = 'flex';
             }
+        }
+
+        function formatTimeShort(ms) {
+            const h = Math.floor(ms / 3600000);
+            const m = Math.floor((ms % 3600000) / 60000);
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
         }
 
         function formatTime(ms) {
@@ -452,12 +962,14 @@
             const saved = localStorage.getItem('tapasya_web_state');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                // Important: Verify if session is old (from previous day)
                 const now = new Date();
                 const sessionDate = new Date(parsed.startTime || Date.now());
                 if (now.toDateString() === sessionDate.toDateString()) {
                     state = { ...state, ...parsed };
                 }
+                // Update dropdowns
+                modalTargetSelect.value = state.target / 60000;
+                modalPauseSelect.value = state.pauseLimit / 60000;
             }
             renderHistory();
         }
@@ -466,21 +978,84 @@
             localStorage.setItem('tapasya_web_state', JSON.stringify(state));
         }
 
+        // DAY NAVIGATION
+        function updateDateDisplay() {
+            const date = new Date();
+            date.setDate(date.getDate() + state.selectedDayOffset);
+
+            if (state.selectedDayOffset === 0) {
+                selectedDateText.innerText = "Today";
+            } else if (state.selectedDayOffset === -1) {
+                selectedDateText.innerText = "Yesterday";
+            } else {
+                selectedDateText.innerText = date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+            }
+
+            btnPrevDay.style.opacity = state.selectedDayOffset > -6 ? "1" : "0.3";
+            btnNextDay.style.opacity = state.selectedDayOffset < 0 ? "1" : "0.3";
+        }
+
+        btnPrevDay.onclick = () => {
+            if (state.selectedDayOffset > -6) {
+                state.selectedDayOffset--;
+                updateDateDisplay();
+                renderHistory();
+            }
+        };
+
+        btnNextDay.onclick = () => {
+            if (state.selectedDayOffset < 0) {
+                state.selectedDayOffset++;
+                updateDateDisplay();
+                renderHistory();
+            }
+        };
+
+        // SETTINGS & ACTIONS
+        btnEditTime.onclick = () => {
+            const newStartTimeStr = prompt("Edit Start Time (HH:mm):", new Date(state.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
+            if (newStartTimeStr) {
+                const [h, m] = newStartTimeStr.split(':');
+                const newStart = new Date();
+                newStart.setHours(parseInt(h), parseInt(m), 0, 0);
+                if (!isNaN(newStart.getTime())) {
+                    state.startTime = newStart.getTime();
+                    saveLocalState();
+                    updateUI();
+                    syncToDrive();
+                }
+            }
+        };
+
+        btnSyncAction.onclick = () => {
+            syncToDrive();
+        };
+
+        modalTargetSelect.onchange = () => {
+            state.target = modalTargetSelect.value * 60000;
+            saveLocalState();
+            updateUI();
+            syncToDrive();
+        };
+
+        modalPauseSelect.onchange = () => {
+            state.pauseLimit = modalPauseSelect.value * 60000;
+            saveLocalState();
+            syncToDrive();
+        };
+
         // CONTROL HANDLERS
         btnMain.onclick = () => {
             if (!state.isActive) {
-                // START
                 state.isActive = true;
                 state.isRunning = true;
                 state.startTime = Date.now();
                 state.elapsedAccumulated = 0;
             } else if (state.isRunning) {
-                // PAUSE
                 state.elapsedAccumulated += (Date.now() - state.startTime);
                 state.isRunning = false;
                 state.pauseStartTime = Date.now();
             } else {
-                // RESUME
                 state.isRunning = true;
                 state.startTime = Date.now();
             }
@@ -493,16 +1068,17 @@
                 state.elapsedAccumulated += (Date.now() - state.startTime);
             }
 
-            // Save to history
+            const effective = calculateEffectiveTime(state.elapsedAccumulated);
             const session = {
                 name: state.name,
-                startTime: state.startTime - state.elapsedAccumulated, // Simple approximation
+                startTime: Date.now() - state.elapsedAccumulated,
                 endTime: Date.now(),
-                duration: state.elapsedAccumulated
+                duration: state.elapsedAccumulated,
+                effectiveDuration: effective,
+                xp: calculateXP(effective)
             };
             state.sessions.unshift(session);
 
-            // Reset
             state.isActive = false;
             state.isRunning = false;
             state.elapsedAccumulated = 0;
@@ -510,22 +1086,39 @@
             saveLocalState();
             renderHistory();
             updateUI();
+            if (accessToken) syncToDrive();
+        };
 
-            // Sync after stop
-            if (gapi.client.drive) syncToDrive();
+        btnReset.onclick = () => {
+            if (confirm("Reset current session?")) {
+                state.isActive = false;
+                state.isRunning = false;
+                state.elapsedAccumulated = 0;
+                saveLocalState();
+                updateUI();
+            }
         };
 
         function renderHistory() {
-            if (state.sessions.length === 0) {
-                sessionList.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No sessions recorded today</div>`;
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + state.selectedDayOffset);
+            const dateStr = targetDate.toDateString();
+
+            const filteredSessions = state.sessions.filter(s => {
+                const sDate = new Date(s.endTime).toDateString();
+                return sDate === dateStr;
+            });
+
+            if (filteredSessions.length === 0) {
+                sessionList.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No sessions recorded for this day</div>`;
                 return;
             }
 
-            sessionList.innerHTML = state.sessions.map(s => `
+            sessionList.innerHTML = filteredSessions.map(s => `
                 <div class="session-item">
                     <div class="session-info">
                         <h4>${s.name}</h4>
-                        <p>${new Date(s.endTime).toLocaleTimeString()}</p>
+                        <p>${new Date(s.endTime).toLocaleTimeString()} • ${s.xp || 0} XP</p>
                     </div>
                     <div class="session-time">${formatTime(s.duration)}</div>
                 </div>
@@ -540,11 +1133,19 @@
             console.log("GSI Response Received");
             try {
                 const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                document.getElementById('user-name').innerText = payload.name;
-                document.getElementById('user-avatar').src = payload.picture;
-                document.getElementById('g_id_signin').style.display = 'none';
-                document.getElementById('user-info').style.display = 'flex';
-                document.getElementById('btn-sync').style.display = 'block';
+
+                // Update UI elements
+                document.getElementById('header-avatar').src = payload.picture;
+                document.getElementById('header-avatar').style.display = 'block';
+                document.getElementById('header-profile-icon').style.display = 'none';
+
+                modalName.innerText = payload.name;
+                modalEmail.innerText = payload.email;
+                modalAvatar.src = payload.picture;
+
+                signinContainerModal.style.display = 'none';
+                profileContainer.style.display = 'flex';
+                btnLogoutModal.style.display = 'block';
 
                 initTokenClient();
             } catch (e) {
@@ -580,8 +1181,12 @@
                     await gapi.client.init({});
                     await gapi.client.load('drive', 'v3');
                     console.log("GAPI Drive loaded successfully");
+                    statusDot.className = 'status-dot status-online';
+                    statusTextDrive.innerText = 'Connected to Drive';
                 } catch (err) {
                     console.error("GAPI Init Error:", err);
+                    statusDot.className = 'status-dot status-offline';
+                    statusTextDrive.innerText = 'Drive Offline';
                 }
             });
         }
@@ -596,13 +1201,9 @@
             toast.classList.add('show');
 
             try {
-                // 1. Find or Create Folder
                 let folderId = await getOrCreateFolder(FOLDER_NAME);
-
-                // 2. Find File
                 let fileId = await findFile(FILE_NAME, folderId);
 
-                // 3. Prepare Data
                 const syncData = {
                     lastUpdated: Date.now(),
                     sessions: state.sessions,
@@ -611,28 +1212,25 @@
                         isRunning: state.isRunning,
                         elapsedTimeMs: calculateElapsed(),
                         sessionName: state.name,
-                        targetTimeMs: state.target
+                        targetTimeMs: state.target,
+                        pauseLimitMs: state.pauseLimit,
+                        startTime: state.startTime
                     } : null
                 };
 
-                // 4. Download and Merge if exists
                 if (fileId) {
                     const cloudData = await downloadFile(fileId);
                     if (cloudData && cloudData.lastUpdated > state.lastUpdatedSync) {
-                        // Cloud is newer, merge or update local
                         mergeData(cloudData);
                     }
                 }
 
-                // 5. Upload New Version
                 await uploadFile(FILE_NAME, syncData, folderId, fileId);
 
                 state.lastUpdatedSync = Date.now();
-                document.getElementById('sync-status').innerText = `Last synced: ${new Date().toLocaleTimeString()}`;
                 saveLocalState();
             } catch (err) {
                 console.error("Sync Error:", err);
-                alert("Sync failed: " + (err.message || "Unknown error"));
             } finally {
                 setTimeout(() => toast.classList.remove('show'), 1000);
             }
@@ -691,7 +1289,6 @@
                 close_delim;
 
             if (existingFileId) {
-                // UPDATE
                 return fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`, {
                     method: 'PATCH',
                     headers: new Headers({
@@ -701,7 +1298,6 @@
                     body: multipartRequestBody
                 });
             } else {
-                // CREATE
                 return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
                     method: 'POST',
                     headers: new Headers({
@@ -714,11 +1310,9 @@
         }
 
         function mergeData(cloud) {
-            // Very simple merge: Combine sessions and unique them by sessionId/timestamp
+            // Deduplicate sessions
             const localSessions = state.sessions;
             const cloudSessions = cloud.sessions || [];
-
-            // Deduplicate by endTime
             const all = [...localSessions, ...cloudSessions];
             const unique = [];
             const seen = new Set();
@@ -729,27 +1323,45 @@
                 }
             }
             state.sessions = unique.sort((a, b) => b.endTime - a.endTime);
+
+            // Sync Active State Handover
+            if (cloud.activeState) {
+                const cloudIsActive = cloud.activeState.isSessionActive;
+                // If local is idle but cloud is active, take over
+                if (!state.isActive && cloudIsActive) {
+                    state.isActive = true;
+                    state.isRunning = cloud.activeState.isRunning;
+                    state.startTime = cloud.activeState.startTime || Date.now();
+                    state.elapsedAccumulated = cloud.activeState.elapsedTimeMs;
+                    state.target = cloud.activeState.targetTimeMs;
+                    state.pauseLimit = cloud.activeState.pauseLimitMs;
+                }
+            }
+
             renderHistory();
+            updateUI();
         }
 
-        document.getElementById('btn-sync').onclick = () => {
-            if (!accessToken) {
-                tokenClient.requestAccessToken();
-            } else {
-                syncToDrive();
-            }
-        };
 
         function logout() {
             google.accounts.id.disableAutoSelect();
             accessToken = null;
-            document.getElementById('user-info').style.display = 'none';
-            document.getElementById('g_id_signin').style.display = 'block';
-            document.getElementById('btn-sync').style.display = 'none';
+
+            // Re-show generic profile icon
+            document.getElementById('header-avatar').style.display = 'none';
+            document.getElementById('header-profile-icon').style.display = 'block';
+
+            signinContainerModal.style.display = 'block';
+            profileContainer.style.display = 'none';
+            btnLogoutModal.style.display = 'none';
+
+            statusDot.className = 'status-dot status-offline';
+            statusTextDrive.innerText = 'Logged Out';
+
             console.log("Logged out");
         }
 
-        document.getElementById('user-info').onclick = logout;
+        btnLogoutModal.onclick = logout;
 
         // BOOTSTRAP
         window.onload = () => {
@@ -772,8 +1384,8 @@
                 callback: handleCredentialResponse
             });
             google.accounts.id.renderButton(
-                document.getElementById("g_id_signin"),
-                { theme: "outline", size: "large" }
+                document.getElementById("g_id_signin_modal"),
+                { theme: "outline", size: "large", width: 280 }
             );
         };
 

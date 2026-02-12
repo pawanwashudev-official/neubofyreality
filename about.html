@@ -4,631 +4,768 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Reality App</title>
-    <meta name="description"
-        content="Learn about Reality - the philosophy, mission, and the developer behind the world's most powerful digital focus app.">
-    <link rel="icon" type="image/png"
-        href="https://res.cloudinary.com/dnh4fonis/image/upload/v1766755541/gk1gp3sf5ihygmo9wfv8.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    <title>Tapasya Web | Deep Focus</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
     <style>
-        /* Page Header */
-        .page-header {
-            padding: 160px 0 80px;
-            text-align: center;
+        :root {
+            --bg-color: #000000;
+            --surface-color: #121212;
+            --primary-color: #BB86FC;
+            --secondary-color: #03DAC6;
+            --error-color: #CF6679;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-glow: rgba(187, 134, 252, 0.15);
         }
 
-        .page-header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .page-header p {
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* Story Section */
-        .story-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
+        /* Premium Glow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            padding: 24px;
+            display: flex;
             align-items: center;
-        }
-
-        .story-content h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 24px;
-        }
-
-        .story-content p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.9;
-            margin-bottom: 20px;
-        }
-
-        .story-visual {
-            display: flex;
-            justify-content: center;
-        }
-
-        /* Developer Card */
-        .developer-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 32px;
-            padding: 48px;
-            text-align: center;
-            max-width: 400px;
-        }
-
-        .developer-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 0 auto 24px;
-            overflow: hidden;
-            border: 4px solid var(--accent);
-            box-shadow: 0 0 40px var(--accent-glow);
-        }
-
-        .developer-avatar img {
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
-        .developer-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        .developer-role {
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        .developer-bio {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 24px;
-        }
-
-        .developer-links {
+        .auth-section {
             display: flex;
-            justify-content: center;
+            align-items: center;
             gap: 12px;
         }
 
-        .developer-links a {
-            width: 44px;
-            height: 44px;
+        #user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        #user-avatar {
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: var(--bg-elevated);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Clock Section */
+        .clock-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            transition: all var(--transition-fast);
-            border: 1px solid var(--border);
-        }
-
-        .developer-links a:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: translateY(-3px);
-        }
-
-        /* Values Section */
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-
-        .value-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            transition: all var(--transition-normal);
-        }
-
-        .value-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(139, 92, 246, 0.4);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .value-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .value-card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .value-card p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        /* Quote Section */
-        .quote-section {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 80px 0;
-        }
-
-        .quote {
-            font-size: 2rem;
-            font-weight: 600;
-            line-height: 1.5;
-            margin-bottom: 24px;
-            font-style: italic;
-        }
-
-        .quote span {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .quote-author {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        /* Open Source Section */
-        .opensource-section {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
-            border: 1px solid var(--border-glass);
-            border-radius: 32px;
-            padding: 60px;
-            text-align: center;
-        }
-
-        .opensource-section h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .opensource-section p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 32px;
-        }
-
-        .github-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 32px;
-        }
-
-        .github-stat {
-            text-align: center;
-        }
-
-        .github-stat h3 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .github-stat p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--gradient-primary);
-            transform: translateX(-50%);
-        }
-
-        .timeline-item {
-            display: flex;
             margin-bottom: 40px;
         }
 
-        .timeline-item:nth-child(odd) {
-            justify-content: flex-start;
-            padding-right: calc(50% + 40px);
+        #waveCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(187, 134, 252, 0.3);
+            background: rgba(18, 18, 18, 0.5);
+            box-shadow: 0 0 30px var(--accent-glow);
         }
 
-        .timeline-item:nth-child(even) {
-            justify-content: flex-end;
-            padding-left: calc(50% + 40px);
+        .timer-overlay {
+            z-index: 10;
+            text-align: center;
         }
 
-        .timeline-content {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 24px;
-            position: relative;
-            max-width: 350px;
+        #timer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .timeline-date {
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .timeline-content h4 {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-
-        .timeline-content p {
+        #status-text {
+            font-size: 16px;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-weight: 600;
         }
 
-        @media (max-width: 1024px) {
-            .story-section {
-                grid-template-columns: 1fr;
-                gap: 60px;
-            }
-
-            .story-visual {
-                order: -1;
-            }
-
-            .values-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .timeline::before {
-                left: 20px;
-            }
-
-            .timeline-item:nth-child(odd),
-            .timeline-item:nth-child(even) {
-                justify-content: flex-start;
-                padding-right: 0;
-                padding-left: 60px;
-            }
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
         }
 
-        @media (max-width: 768px) {
-            .page-header h1 {
-                font-size: 2.5rem;
+        .btn {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-error {
+            background-color: var(--error-color);
+            color: #fff;
+        }
+
+        /* History Section */
+        .history-section {
+            width: 100%;
+            background: var(--surface-color);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        #session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .session-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-info h4 {
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .session-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .session-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Glassmorphism Sync Dialog */
+        #sync-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(187, 134, 252, 0.9);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 100;
+            transition: transform 0.5s ease;
+        }
+
+        #sync-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .clock-container {
+                width: 280px;
+                height: 280px;
             }
 
-            .values-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .quote {
-                font-size: 1.5rem;
-            }
-
-            .opensource-section {
-                padding: 40px 24px;
-            }
-
-            .github-stats {
-                flex-direction: column;
-                gap: 20px;
+            #timer-text {
+                font-size: 42px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Background Effects -->
-    <div class="bg-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-    <div class="cursor-glow"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="navbar-logo">
-                <img src="https://res.cloudinary.com/dnh4fonis/image/upload/v1766755541/gk1gp3sf5ihygmo9wfv8.png"
-                    alt="Reality">
-                Reality
-            </a>
-            <div class="navbar-menu">
-                <a href="index.html" class="navbar-link">Home</a>
-                <a href="features.html" class="navbar-link">Features</a>
-                <a href="guide.html" class="navbar-link">User Guide</a>
-                <a href="about.html" class="navbar-link active">About</a>
-                <a href="privacy.html" class="navbar-link">Privacy</a>
-                <a href="https://github.com/pawanwashudev-official/Reality/releases/download/v1.0.0/Reality-v1.0.0-release.apk"
-                    class="navbar-cta mobile-only" target="_blank">Download App</a>
+    <header>
+        <div class="header-title">Tapasya</div>
+        <div class="auth-section">
+            <div id="user-info">
+                <img id="user-avatar" src="" alt="">
+                <span id="user-name"></span>
             </div>
-            <a href="https://github.com/pawanwashudev-official/Reality/releases/download/v1.0.0/Reality-v1.0.0-release.apk"
-                class="navbar-cta desktop-only" target="_blank">
-                Download
-            </a>
-            <button class="navbar-toggle">☰</button>
-        </div>
-    </nav>
-
-    <!-- Page Header -->
-    <header class="page-header">
-        <div class="container">
-            <h1 class="reveal">About <span class="gradient-text">Reality</span></h1>
-            <p class="reveal">The story, mission, and philosophy behind the app.</p>
+            <div id="g_id_signin"></div>
+            <button id="btn-sync" class="btn btn-secondary"
+                style="padding: 8px 12px; font-size: 12px; border-radius: 10px; display: none;">
+                Sync Now
+            </button>
         </div>
     </header>
 
-    <!-- Story Section -->
-    <section class="section">
-        <div class="container">
-            <div class="story-section">
-                <div class="story-content reveal">
-                    <h2>Why I Built <span class="gradient-text">Reality</span></h2>
-                    <p>
-                        I was losing hours every day to mindless scrolling. Instagram, YouTube, Twitter — the algorithms
-                        were winning. I tried other focus apps, but they all had the same problems: premium paywalls,
-                        data collection, or bypass loopholes.
-                    </p>
-                    <p>
-                        So I built Reality — the app I needed but couldn't find. No subscriptions. No data collection.
-                        No half-measures. Just genuine protection from digital distractions.
-                    </p>
-                    <p>
-                        The goal was simple: create something so robust that even I couldn't trick my way out of it.
-                        That's why Strict Mode exists — for those moments when willpower alone isn't enough.
-                    </p>
-                </div>
-                <div class="story-visual reveal">
-                    <div class="developer-card">
-                        <!-- PLACEHOLDER: Developer photo -->
-                        <div class="developer-avatar">
-                            <div class="img-placeholder" style="min-height: 100%; border-radius: 50%; border: none;">
-                                <div class="img-placeholder-icon" style="font-size: 3rem;">👤</div>
-                            </div>
-                            <!-- Uncomment when you have the real image:
-                            <img src="YOUR_CLOUDINARY_URL/developer_photo.jpg" alt="Pawan Washudev">
-                            -->
-                        </div>
-                        <h3 class="developer-name">Pawan Washudev</h3>
-                        <p class="developer-role">Creator & Developer</p>
-                        <p class="developer-bio">
-                            Android developer passionate about digital wellbeing and privacy-first software. Building
-                            tools that respect users.
-                        </p>
-                        <div class="developer-links">
-                            <a href="https://github.com/pawanwashudev-official" target="_blank" title="GitHub">📂</a>
-                            <a href="https://t.me/pawanwashudev" target="_blank" title="Telegram">💬</a>
-                            <a href="mailto:pawanwashudev@gmail.com" title="Email">✉️</a>
-                        </div>
-                    </div>
-                </div>
+    <main>
+        <div class="clock-container">
+            <canvas id="waveCanvas"></canvas>
+            <div class="timer-overlay">
+                <div id="timer-text">00:00:00</div>
+                <div id="status-text">Ready</div>
             </div>
         </div>
-    </section>
 
-    <!-- Values Section -->
-    <section class="section section-dark">
-        <div class="container">
-            <div class="section-header reveal">
-                <p class="section-label">Our Values</p>
-                <h2 class="section-title">What We <span>Believe In</span></h2>
-            </div>
-            <div class="values-grid">
-                <div class="value-card reveal stagger-1">
-                    <div class="value-icon">🔒</div>
-                    <h3>Privacy First</h3>
-                    <p>Your data is yours. We don't collect, store, or transmit anything. Reality works 100% offline and
-                        has no internet permission.</p>
-                </div>
-                <div class="value-card reveal stagger-2">
-                    <div class="value-icon">💎</div>
-                    <h3>Free Forever</h3>
-                    <p>All features are free. No premium tiers, no subscriptions, no "unlock for $9.99". We believe
-                        everyone deserves digital wellbeing tools.</p>
-                </div>
-                <div class="value-card reveal stagger-3">
-                    <div class="value-icon">🔓</div>
-                    <h3>Open Source</h3>
-                    <p>Every line of code is public on GitHub. Don't trust us? Read the code yourself. Transparency
-                        builds trust.</p>
-                </div>
-                <div class="value-card reveal stagger-4">
-                    <div class="value-icon">🎯</div>
-                    <h3>Actually Works</h3>
-                    <p>No half-measures. Strict Mode is truly unbreakable. We built features that work even when you
-                        don't want them to.</p>
-                </div>
-                <div class="value-card reveal stagger-5">
-                    <div class="value-icon">✨</div>
-                    <h3>Beautiful Design</h3>
-                    <p>Focus apps don't have to be ugly. Material You design, smooth animations, and attention to detail
-                        make Reality a joy to use.</p>
-                </div>
-                <div class="value-card reveal stagger-6">
-                    <div class="value-icon">🚀</div>
-                    <h3>Continuous Improvement</h3>
-                    <p>Regular updates based on user feedback. We listen, we iterate, we improve. Your input shapes
-                        Reality's future.</p>
-                </div>
-            </div>
+        <div class="controls">
+            <button id="btn-main" class="btn btn-primary">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+                <span>Start</span>
+            </button>
+            <button id="btn-stop" class="btn btn-error" style="display: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h12v12H6z" />
+                </svg>
+                <span>Stop</span>
+            </button>
         </div>
-    </section>
 
-    <!-- Quote Section -->
-    <section class="section">
-        <div class="container">
-            <div class="quote-section reveal">
-                <p class="quote">
-                    "The cost of a thing is the amount of <span>life</span> which is required to be exchanged for it."
-                </p>
-                <p class="quote-author">— Henry David Thoreau</p>
+        <section class="history-section">
+            <div class="history-header">
+                <h3 class="history-title">Recent Sessions</h3>
+                <span id="sync-status" style="font-size: 12px; color: var(--text-secondary);">Last synced: Never</span>
             </div>
-        </div>
-    </section>
+            <div id="session-list">
+                <!-- Session items will be injected here -->
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    No sessions recorded today
+                </div>
+            </div>
+        </section>
+    </main>
 
-    <!-- Open Source Section -->
-    <section class="section section-dark">
-        <div class="container">
-            <div class="opensource-section reveal">
-                <h2>100% Open Source</h2>
-                <p>Reality is completely open source. Every line of code is available on GitHub for you to read, audit,
-                    and contribute to.</p>
-                <div class="github-stats">
-                    <div class="github-stat">
-                        <h3>15K+</h3>
-                        <p>Lines of Code</p>
-                    </div>
-                    <div class="github-stat">
-                        <h3>75+</h3>
-                        <p>Kotlin Files</p>
-                    </div>
-                    <div class="github-stat">
-                        <h3>0</h3>
-                        <p>Tracking Libraries</p>
-                    </div>
-                </div>
-                <a href="https://github.com/pawanwashudev-official/Reality" class="btn btn-primary btn-lg"
-                    target="_blank">
-                    ⭐ Star on GitHub
-                </a>
-            </div>
-        </div>
-    </section>
+    <div id="sync-toast">Syncing to Cloud...</div>
 
-    <!-- Timeline Section -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header reveal">
-                <p class="section-label">Journey</p>
-                <h2 class="section-title">Reality's <span>Story</span></h2>
-            </div>
-            <div class="timeline">
-                <div class="timeline-item reveal">
-                    <div class="timeline-content">
-                        <p class="timeline-date">December 2025</p>
-                        <h4>Version 1.0 Launch</h4>
-                        <p>First public release with core blocking, usage stats, and Strict Mode.</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal">
-                    <div class="timeline-content">
-                        <p class="timeline-date">December 2025</p>
-                        <h4>Website Launch</h4>
-                        <p>Official website with documentation, guides, and privacy policy.</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal">
-                    <div class="timeline-content">
-                        <p class="timeline-date">2026</p>
-                        <h4>What's Next</h4>
-                        <p>Widgets, Pomodoro timer, statistics export, and more based on your feedback.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <script>
+        // CONFIG
+        const CLIENT_ID = '163374197397-mkmhn9trpthu5f9imrkgtjo52rrnb1sh.apps.googleusercontent.com';
+        const FOLDER_NAME = 'Reality_Tapasya';
+        const FILE_NAME = 'tapasya_daily_data.json';
 
-    <!-- CTA -->
-    <section class="section section-dark">
-        <div class="container text-center">
-            <h2 class="section-title reveal">Join the <span class="gradient-text">Movement</span></h2>
-            <p class="section-subtitle reveal mb-4">Take control of your digital life. Download Reality today.</p>
-            <div class="reveal flex flex-center gap-2">
-                <a href="https://github.com/pawanwashudev-official/Reality/releases/download/v1.0.0/Reality-v1.0.0-release.apk"
-                    class="btn btn-primary btn-lg" target="_blank">
-                    📥 Download Reality
-                </a>
-                <a href="https://github.com/pawanwashudev-official/Reality" class="btn btn-secondary btn-lg"
-                    target="_blank">
-                    ⭐ Star on GitHub
-                </a>
-            </div>
-        </div>
-    </section>
+        // STATE
+        let state = {
+            isActive: false,
+            isRunning: false,
+            startTime: 0,
+            elapsedAccumulated: 0,
+            pauseStartTime: 0,
+            totalPause: 0,
+            name: 'Deep Focus',
+            target: 60 * 60 * 1000,
+            lastUpdatedSync: 0,
+            sessions: []
+        };
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="navbar-logo">
-                        <img src="https://res.cloudinary.com/dnh4fonis/image/upload/v1766755541/gk1gp3sf5ihygmo9wfv8.png"
-                            alt="Reality">
-                        Reality
-                    </a>
-                    <p>The world's most powerful digital focus app. Zero data collection. Zero ads.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Product</h4>
-                    <a href="features.html">Features</a>
-                    <a href="guide.html">User Guide</a>
-                    <a href="about.html">About</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Resources</h4>
-                    <a href="https://github.com/pawanwashudev-official/Reality" target="_blank">GitHub</a>
-                    <a href="https://github.com/pawanwashudev-official/Reality/releases" target="_blank">Releases</a>
-                    <a href="privacy.html">Privacy</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Contact</h4>
-                    <a href="mailto:pawanwashudev@gmail.com">Email</a>
-                    <a href="https://t.me/pawanwashudev" target="_blank">Telegram</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2025 Neubofy. Made with ❤️ by Pawan Washudev</p>
-                <div class="social-links">
-                    <a href="https://github.com/pawanwashudev-official" target="_blank">📂</a>
-                    <a href="https://t.me/pawanwashudev" target="_blank">💬</a>
-                    <a href="mailto:pawanwashudev@gmail.com">✉️</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        // UI ELEMENTS
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        const timerText = document.getElementById('timer-text');
+        const statusText = document.getElementById('status-text');
+        const btnMain = document.getElementById('btn-main');
+        const btnStop = document.getElementById('btn-stop');
+        const sessionList = document.getElementById('session-list');
 
-    <script src="js/main.js"></script>
+        // INITIALIZE CANVAS
+        function initCanvas() {
+            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+
+        // WAVE ANIMATION
+        let offset = 0;
+        function drawWave() {
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+            const progress = state.isActive ? Math.min(calculateElapsed() / state.target, 1) : 0.05;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw background fill
+            ctx.fillStyle = '#121212';
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Wave height calculation
+            const waveHeight = h * (1 - progress);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, w / 2 - 2, 0, Math.PI * 2);
+            ctx.clip();
+
+            // Draw Waves
+            drawSineWave(w, h, waveHeight, offset, '#BB86FC');
+            drawSineWave(w, h, waveHeight, offset + 100, 'rgba(187, 134, 252, 0.5)');
+
+            ctx.restore();
+
+            offset += 0.05;
+            requestAnimationFrame(drawWave);
+        }
+
+        function drawSineWave(w, h, waveHeight, shift, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            for (let x = 0; x <= w; x++) {
+                const y = Math.sin(x * 0.02 + shift) * 5 + waveHeight;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(w, h);
+            ctx.fill();
+        }
+
+        // CORE LOGIC (ZERO-BACKGROUND PORT)
+        function calculateElapsed() {
+            if (!state.isActive) return 0;
+            if (state.isRunning) {
+                return state.elapsedAccumulated + (Date.now() - state.startTime);
+            }
+            return state.elapsedAccumulated;
+        }
+
+        function updateUI() {
+            const elapsed = calculateElapsed();
+            timerText.innerText = formatTime(elapsed);
+
+            if (!state.isActive) {
+                statusText.innerText = "Ready";
+                btnMain.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Start</span>`;
+                btnStop.style.display = 'none';
+            } else if (state.isRunning) {
+                statusText.innerText = "Focusing...";
+                btnMain.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg><span>Pause</span>`;
+                btnStop.style.display = 'flex';
+            } else {
+                statusText.innerText = "Paused";
+                btnMain.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Resume</span>`;
+                btnStop.style.display = 'flex';
+            }
+        }
+
+        function formatTime(ms) {
+            const h = Math.floor(ms / 3600000);
+            const m = Math.floor((ms % 3600000) / 60000);
+            const s = Math.floor((ms % 60000) / 1000);
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // LOAD LOCAL STATE
+        function loadLocalState() {
+            const saved = localStorage.getItem('tapasya_web_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Important: Verify if session is old (from previous day)
+                const now = new Date();
+                const sessionDate = new Date(parsed.startTime || Date.now());
+                if (now.toDateString() === sessionDate.toDateString()) {
+                    state = { ...state, ...parsed };
+                }
+            }
+            renderHistory();
+        }
+
+        function saveLocalState() {
+            localStorage.setItem('tapasya_web_state', JSON.stringify(state));
+        }
+
+        // CONTROL HANDLERS
+        btnMain.onclick = () => {
+            if (!state.isActive) {
+                // START
+                state.isActive = true;
+                state.isRunning = true;
+                state.startTime = Date.now();
+                state.elapsedAccumulated = 0;
+            } else if (state.isRunning) {
+                // PAUSE
+                state.elapsedAccumulated += (Date.now() - state.startTime);
+                state.isRunning = false;
+                state.pauseStartTime = Date.now();
+            } else {
+                // RESUME
+                state.isRunning = true;
+                state.startTime = Date.now();
+            }
+            saveLocalState();
+            updateUI();
+        };
+
+        btnStop.onclick = () => {
+            if (state.isRunning) {
+                state.elapsedAccumulated += (Date.now() - state.startTime);
+            }
+
+            // Save to history
+            const session = {
+                name: state.name,
+                startTime: state.startTime - state.elapsedAccumulated, // Simple approximation
+                endTime: Date.now(),
+                duration: state.elapsedAccumulated
+            };
+            state.sessions.unshift(session);
+
+            // Reset
+            state.isActive = false;
+            state.isRunning = false;
+            state.elapsedAccumulated = 0;
+
+            saveLocalState();
+            renderHistory();
+            updateUI();
+
+            // Sync after stop
+            if (gapi.client.drive) syncToDrive();
+        };
+
+        function renderHistory() {
+            if (state.sessions.length === 0) {
+                sessionList.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No sessions recorded today</div>`;
+                return;
+            }
+
+            sessionList.innerHTML = state.sessions.map(s => `
+                <div class="session-item">
+                    <div class="session-info">
+                        <h4>${s.name}</h4>
+                        <p>${new Date(s.endTime).toLocaleTimeString()}</p>
+                    </div>
+                    <div class="session-time">${formatTime(s.duration)}</div>
+                </div>
+            `).join('');
+        }
+
+        // GOOGLE DRIVE INTEGRATION
+        let tokenClient;
+        let accessToken = null;
+
+        function handleCredentialResponse(response) {
+            // This is for GSI (Sign-In button)
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            document.getElementById('user-name').innerText = payload.name;
+            document.getElementById('user-avatar').src = payload.picture;
+            document.getElementById('g_id_signin').style.display = 'none';
+            document.getElementById('user-info').style.display = 'flex';
+            document.getElementById('btn-sync').style.display = 'block';
+
+            // Now initialize token client for Drive Scopes
+            initTokenClient();
+        }
+
+        function initTokenClient() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/drive.file',
+                callback: (response) => {
+                    if (response.error !== undefined) {
+                        throw (response);
+                    }
+                    accessToken = response.access_token;
+                    syncToDrive();
+                },
+            });
+            initGapi();
+        }
+
+        function initGapi() {
+            gapi.load('client', async () => {
+                await gapi.client.init({});
+                await gapi.client.load('drive', 'v3');
+                console.log("GAPI Drive loaded");
+                // Attempt to fetch if we have a token (usually requires button click first)
+            });
+        }
+
+        async function syncToDrive() {
+            if (!accessToken) {
+                tokenClient.requestAccessToken({ prompt: 'none' });
+                return;
+            }
+
+            const toast = document.getElementById('sync-toast');
+            toast.classList.add('show');
+
+            try {
+                // 1. Find or Create Folder
+                let folderId = await getOrCreateFolder(FOLDER_NAME);
+
+                // 2. Find File
+                let fileId = await findFile(FILE_NAME, folderId);
+
+                // 3. Prepare Data
+                const syncData = {
+                    lastUpdated: Date.now(),
+                    sessions: state.sessions,
+                    activeState: state.isActive ? {
+                        isSessionActive: state.isActive,
+                        isRunning: state.isRunning,
+                        elapsedTimeMs: calculateElapsed(),
+                        sessionName: state.name,
+                        targetTimeMs: state.target
+                    } : null
+                };
+
+                // 4. Download and Merge if exists
+                if (fileId) {
+                    const cloudData = await downloadFile(fileId);
+                    if (cloudData && cloudData.lastUpdated > state.lastUpdatedSync) {
+                        // Cloud is newer, merge or update local
+                        mergeData(cloudData);
+                    }
+                }
+
+                // 5. Upload New Version
+                await uploadFile(FILE_NAME, syncData, folderId, fileId);
+
+                state.lastUpdatedSync = Date.now();
+                document.getElementById('sync-status').innerText = `Last synced: ${new Date().toLocaleTimeString()}`;
+                saveLocalState();
+            } catch (err) {
+                console.error("Sync Error:", err);
+                alert("Sync failed: " + (err.message || "Unknown error"));
+            } finally {
+                setTimeout(() => toast.classList.remove('show'), 1000);
+            }
+        }
+
+        async function getOrCreateFolder(name) {
+            const res = await gapi.client.drive.files.list({
+                q: `name = '${name}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                fields: 'files(id)',
+                spaces: 'drive'
+            });
+            if (res.result.files.length > 0) return res.result.files[0].id;
+
+            const folderRes = await gapi.client.drive.files.create({
+                resource: { name: name, mimeType: 'application/vnd.google-apps.folder' },
+                fields: 'id'
+            });
+            return folderRes.result.id;
+        }
+
+        async function findFile(name, folderId) {
+            const res = await gapi.client.drive.files.list({
+                q: `name = '${name}' and '${folderId}' in parents and trashed = false`,
+                fields: 'files(id)',
+                spaces: 'drive'
+            });
+            return res.result.files.length > 0 ? res.result.files[0].id : null;
+        }
+
+        async function downloadFile(id) {
+            const res = await gapi.client.drive.files.get({
+                fileId: id,
+                alt: 'media'
+            });
+            return res.result;
+        }
+
+        async function uploadFile(name, content, folderId, existingFileId) {
+            const boundary = '-------314159265358979323846';
+            const delimiter = "\r\n--" + boundary + "\r\n";
+            const close_delim = "\r\n--" + boundary + "--";
+
+            const metadata = {
+                name: name,
+                mimeType: 'application/json',
+                parents: [folderId]
+            };
+
+            const multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(content) +
+                close_delim;
+
+            if (existingFileId) {
+                // UPDATE
+                return fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`, {
+                    method: 'PATCH',
+                    headers: new Headers({
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'multipart/related; boundary=' + boundary
+                    }),
+                    body: multipartRequestBody
+                });
+            } else {
+                // CREATE
+                return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'multipart/related; boundary=' + boundary
+                    }),
+                    body: multipartRequestBody
+                });
+            }
+        }
+
+        function mergeData(cloud) {
+            // Very simple merge: Combine sessions and unique them by sessionId/timestamp
+            const localSessions = state.sessions;
+            const cloudSessions = cloud.sessions || [];
+
+            // Deduplicate by endTime
+            const all = [...localSessions, ...cloudSessions];
+            const unique = [];
+            const seen = new Set();
+            for (const s of all) {
+                if (!seen.has(s.endTime)) {
+                    unique.push(s);
+                    seen.add(s.endTime);
+                }
+            }
+            state.sessions = unique.sort((a, b) => b.endTime - a.endTime);
+            renderHistory();
+        }
+
+        document.getElementById('btn-sync').onclick = () => {
+            if (!accessToken) {
+                tokenClient.requestAccessToken();
+            } else {
+                syncToDrive();
+            }
+        };
+
+        function logout() {
+            google.accounts.id.disableAutoSelect();
+            accessToken = null;
+            document.getElementById('user-info').style.display = 'none';
+            document.getElementById('g_id_signin').style.display = 'block';
+            document.getElementById('btn-sync').style.display = 'none';
+            console.log("Logged out");
+        }
+
+        document.getElementById('user-info').onclick = logout;
+
+        // BOOTSTRAP
+        window.onload = () => {
+            initCanvas();
+            loadLocalState();
+            drawWave();
+
+            // Periodic UI Update
+            setInterval(updateUI, 1000);
+
+            // Periodic Auto-Sync (Every 5 mins if active and logged in)
+            setInterval(() => {
+                if (state.isActive && state.isRunning && accessToken) {
+                    syncToDrive();
+                }
+            }, 5 * 60 * 1000);
+
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("g_id_signin"),
+                { theme: "outline", size: "large" }
+            );
+        };
+
+        window.onresize = initCanvas;
+    </script>
 </body>
 
 </html>

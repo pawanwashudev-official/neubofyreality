@@ -1028,7 +1028,11 @@
         };
 
         btnSyncAction.onclick = () => {
-            syncToDrive();
+            if (!accessToken) {
+                tokenClient.requestAccessToken(); // Manual click = prompt allowed
+            } else {
+                syncToDrive();
+            }
         };
 
         modalTargetSelect.onchange = () => {
@@ -1170,9 +1174,15 @@
                     scope: 'https://www.googleapis.com/auth/drive.file',
                     callback: (response) => {
                         if (response.error !== undefined) {
-                            console.error("Token Client Error:", response);
-                            alert("Google Error: " + response.error);
-                            throw (response);
+                            console.warn("Token Client Error:", response.error);
+                            if (response.error === 'interaction_required') {
+                                // For background sync, we just stop. 
+                                // For manual sync, the button handler should đã handled it, 
+                                // but if we got here from a silent request that failed, we just log it.
+                            } else {
+                                alert("Google Auth Error: " + response.error);
+                            }
+                            return;
                         }
                         accessToken = response.access_token;
                         console.log("Access Token acquired");

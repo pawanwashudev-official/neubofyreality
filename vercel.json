@@ -1,32 +1,27 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [
+    "rewrites": [
         {
-          "type": "host",
-          "value": "realityprivicypolicy.vercel.app"
+            "source": "/(.*)",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "realityprivicypolicy.vercel.app"
+                }
+            ],
+            "destination": "/privacy.html"
         }
-      ],
-      "destination": "/privacy.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "has": [
+    ],
+    "redirects": [
         {
-          "type": "host",
-          "value": "realityprivicypolicy.vercel.app"
+            "source": "/",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "realityprivicypolicy.vercel.app"
+                }
+            ],
+            "destination": "/privacy.html",
+            "permanent": false
         }
-      ],
-      "destination": "/privacy.html",
-      "permanent": false
-    },
-    {
-      "source": "/",
-      "destination": "/tapasya_web.html",
-      "permanent": false
-    }
-  ]
+    ]
 }

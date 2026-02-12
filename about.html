@@ -537,39 +537,52 @@
         let accessToken = null;
 
         function handleCredentialResponse(response) {
-            // This is for GSI (Sign-In button)
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            document.getElementById('user-name').innerText = payload.name;
-            document.getElementById('user-avatar').src = payload.picture;
-            document.getElementById('g_id_signin').style.display = 'none';
-            document.getElementById('user-info').style.display = 'flex';
-            document.getElementById('btn-sync').style.display = 'block';
+            console.log("GSI Response Received");
+            try {
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                document.getElementById('user-name').innerText = payload.name;
+                document.getElementById('user-avatar').src = payload.picture;
+                document.getElementById('g_id_signin').style.display = 'none';
+                document.getElementById('user-info').style.display = 'flex';
+                document.getElementById('btn-sync').style.display = 'block';
 
-            // Now initialize token client for Drive Scopes
-            initTokenClient();
+                initTokenClient();
+            } catch (e) {
+                console.error("Payload decode failed", e);
+            }
         }
 
         function initTokenClient() {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: 'https://www.googleapis.com/auth/drive.file',
-                callback: (response) => {
-                    if (response.error !== undefined) {
-                        throw (response);
-                    }
-                    accessToken = response.access_token;
-                    syncToDrive();
-                },
-            });
-            initGapi();
+            try {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: 'https://www.googleapis.com/auth/drive.file',
+                    callback: (response) => {
+                        if (response.error !== undefined) {
+                            console.error("Token Client Error:", response);
+                            alert("Google Error: " + response.error);
+                            throw (response);
+                        }
+                        accessToken = response.access_token;
+                        console.log("Access Token acquired");
+                        syncToDrive();
+                    },
+                });
+                initGapi();
+            } catch (err) {
+                console.error("Token Client Init Failed:", err);
+            }
         }
 
         function initGapi() {
             gapi.load('client', async () => {
-                await gapi.client.init({});
-                await gapi.client.load('drive', 'v3');
-                console.log("GAPI Drive loaded");
-                // Attempt to fetch if we have a token (usually requires button click first)
+                try {
+                    await gapi.client.init({});
+                    await gapi.client.load('drive', 'v3');
+                    console.log("GAPI Drive loaded successfully");
+                } catch (err) {
+                    console.error("GAPI Init Error:", err);
+                }
             });
         }
 

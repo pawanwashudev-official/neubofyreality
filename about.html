@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tapasya Web | Deep Focus</title>
+    <title>Reality | Tapasya Companion</title>
     <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap"
@@ -561,7 +561,7 @@
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
                 </svg>
             </button>
-            <div class="header-title">Tapasya</div>
+            <div class="header-title">Reality | Tapasya</div>
             <div class="header-actions">
                 <button id="btn-edit-time" class="icon-btn" title="Edit Start Time" style="display: none;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -651,7 +651,7 @@
 
         <section class="history-section">
             <div class="section-header">
-                <h3 class="history-title">Session History</h3>
+                <h3 class="history-title">Focus Log</h3>
                 <div class="day-navigator">
                     <button id="btn-prev-day" class="nav-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -674,7 +674,7 @@
     <div id="modal-profile" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Profile & Settings</h2>
+                <h2 class="modal-title">Reality Tapasya Settings</h2>
                 <button class="icon-btn" onclick="toggleModal('modal-profile', false)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -703,7 +703,7 @@
 
             <div class="settings-group">
                 <div class="settings-row">
-                    <label>Daily Target</label>
+                    <label>Daily Target Goal</label>
                     <select id="modal-target-select">
                         <option value="15">15m</option>
                         <option value="30">30m</option>
@@ -714,7 +714,7 @@
                     </select>
                 </div>
                 <div class="settings-row">
-                    <label>Pause Limit</label>
+                    <label>Rest Interval Cap</label>
                     <select id="modal-pause-select">
                         <option value="5">5m</option>
                         <option value="15" selected>15m</option>
@@ -1310,7 +1310,7 @@
         }
 
         function mergeData(cloud) {
-            // Deduplicate sessions
+            // 1. Deduplicate & Sync Session History
             const localSessions = state.sessions;
             const cloudSessions = cloud.sessions || [];
             const all = [...localSessions, ...cloudSessions];
@@ -1324,17 +1324,35 @@
             }
             state.sessions = unique.sort((a, b) => b.endTime - a.endTime);
 
-            // Sync Active State Handover
+            // 2. Sync Active Session Handover (The "Perfect" Link)
             if (cloud.activeState) {
                 const cloudIsActive = cloud.activeState.isSessionActive;
-                // If local is idle but cloud is active, take over
-                if (!state.isActive && cloudIsActive) {
-                    state.isActive = true;
-                    state.isRunning = cloud.activeState.isRunning;
-                    state.startTime = cloud.activeState.startTime || Date.now();
-                    state.elapsedAccumulated = cloud.activeState.elapsedTimeMs;
-                    state.target = cloud.activeState.targetTimeMs;
-                    state.pauseLimit = cloud.activeState.pauseLimitMs;
+                const cloudTimestamp = cloud.lastUpdated || 0;
+
+                // If cloud is active, we should follow it if we are idle OR if cloud is clearly newer
+                if (cloudIsActive) {
+                    if (!state.isActive || cloudTimestamp > (state.lastUpdatedSync || 0)) {
+                        console.log("Handover: Syncing active session from Cloud");
+                        state.isActive = true;
+                        state.isRunning = cloud.activeState.isRunning;
+                        state.startTime = cloud.activeState.startTime || Date.now();
+                        state.elapsedAccumulated = cloud.activeState.elapsedTimeMs;
+                        state.target = cloud.activeState.targetTimeMs;
+                        state.pauseLimit = cloud.activeState.pauseLimitMs;
+                        state.name = cloud.activeState.sessionName || 'Deep Focus';
+
+                        // Sync modal dropdowns to current state
+                        modalTargetSelect.value = state.target / 60000;
+                        modalPauseSelect.value = state.pauseLimit / 60000;
+                    }
+                } else if (state.isActive) {
+                    // Cloud session ended, we should stop too if cloud is newer
+                    if (cloudTimestamp > (state.lastUpdatedSync || 0)) {
+                        console.log("Handover: Stopping session as it ended in Cloud");
+                        state.isActive = false;
+                        state.isRunning = false;
+                        state.elapsedAccumulated = 0;
+                    }
                 }
             }
 
